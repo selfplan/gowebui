@@ -6,7 +6,7 @@
 仅支持32位DLL。
 
 
-#使用前准备
+# 使用前准备
 dll文件夹内有两个DLL文件，一个是 miniblink 的32位接口DLL。
 
 大家可以自行到 https://github.com/weolar/miniblink49/releases 下载最新编译后的 dll 替换就行。（注意，名称一定得是 node.dll，后有说明）
@@ -31,7 +31,7 @@ dll文件夹内有两个DLL文件，一个是 miniblink 的32位接口DLL。
 另外，如果你的系统是 64位的，在首次编译或者构建时记得请先：
 set GOARCH=386
 
-#如何使用
+# 如何使用
 以下是一个简单且完整的显示一个浏览器窗口的代码：
 
 package main
@@ -76,7 +76,7 @@ func abcC(es gowebui.JsExecState, param uintptr) uintptr {
 	return 0
 }
 
-#目前已实现公开接口
+# 目前已实现公开接口
 
 公开类型：
 
