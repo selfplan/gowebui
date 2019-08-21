@@ -135,6 +135,11 @@ func miniblinkCommand(m_WebView WkeWebView, command string, args ...interface{})
 	case "wkeGetCookie":
 		ret, _, _ = syscall.Syscall(dllWkeGetCookie, 1, wkeWebViewToPtr(m_WebView), 0, 0)
 		return PtrToString(ret)
+
+	case "wkeResize":
+		ret, _, _ = syscall.Syscall(dllWkeResize, 3, wkeWebViewToPtr(m_WebView), args[0].(uintptr), args[1].(uintptr))
+		return ret
+
 	case "wkeGetUserAgent":
 		ret, _, _ = syscall.Syscall(dllWkeGetUserAgent, 1, wkeWebViewToPtr(m_WebView), 0, 0)
 		return PtrToString(ret)

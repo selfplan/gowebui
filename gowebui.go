@@ -42,6 +42,7 @@ type WebView struct {
 	hWebView WkeWebView
 }
 
+//初始化，整个程序内只能在最开始时调用且只能调用一次
 func Initialize(mbPath, gonodePath string) bool {
 	loadMBDLL(mbPath, gonodePath)
 	_dllCommand = make(chan dllAPI)
@@ -232,16 +233,16 @@ func (mb *WebView) GetHWND() HWnd {
 }
 
 //设置窗口宽高
-func (mb *WebView) Resize(w, h int32) {
+func (mb *WebView) SetSize(w, h uintptr) {
 	var api dllAPI
-	api.apiStr = "wkeGetURL"
+	api.apiStr = "wkeResize"
 	api.hWebView = mb.hWebView
 	api.arg1 = w
 	api.arg2 = h
 	callDLLAPI(api)
 }
 
-//置窗口居中
+//将窗口居中
 func (mb *WebView) MoveToCenter() {
 	var api dllAPI
 	api.apiStr = "wkeMoveToCenter"
@@ -387,9 +388,8 @@ func (mb *WebView) NetHookRequest(job uintptr) {
 	callDLLAPI(api)
 }
 
-//CancelRequest
 //在BindLoadUrlBegin回调里调用，设置后，此请求将被取消。
-//参见 BindLoadUrlBegin 反返回值说明，组合用。
+//参见 BindLoadUrlBegin 反返回值说明，个人尝试，返回值无效，需要取消连接的话，直接调用此方法
 func (mb *WebView) NetCancelRequest(job uintptr) {
 	var api dllAPI
 	api.apiStr = "wkeNetCancelRequest"
@@ -430,7 +430,7 @@ func (mb *WebView) BindTitleChanged(f func(webView WkeWebView, param int32, titl
 
 //网页准备浏览时触发此回调。
 //第三个回调的参数：0，表示点击a标签触发；1,点击form触发;2,前进后退触发;3,重新加载触发;4,表单重新提交；5，其它方式触发
-//回调函数返回 0 表示阻止本次浏览，1表示继续进行浏览
+//回调函数返回 0 表示阻止本次浏览，1表示继续进行浏览 (见 NetCancelRequest() 方法说明)
 func (mb *WebView) BindNavigation(f func(webView WkeWebView, param int32, wkeNavigationType int32, url WkeString) uintptr, callbackParam int32) {
 	var api dllAPI
 	api.apiStr = "wkeOnNavigation"
@@ -475,6 +475,7 @@ func (mb *WebView) BindDocumentReady2(f func(webView WkeWebView, param int32, fr
 	callDLLAPI(api)
 }
 
+//任何网络请求发起前会触发此回调，见 NetHookRequest() 说明
 func (mb *WebView) BindLoadUrlBegin(f func(webView WkeWebView, param int32, url_char, job uintptr) uintptr, callbackParam int32) {
 	var api dllAPI
 	api.apiStr = "wkeOnLoadUrlBegin"
@@ -511,7 +512,6 @@ func BindJsFunction(jsFuncName string, f func(es JsExecState, param uintptr) uin
 
 //用于JSfunc的回调函数，根据参数索引取得JSfunc传过来的值的 jsValue
 //第一个参数 使用回调函数的es参数，第二个参数为索引，从0开始
-
 func (mb *WebView) GetJsValueFromArg(es JsExecState, argIdx int32) JsValue {
 	var api dllAPI
 	api.apiStr = "jsArg"
@@ -554,7 +554,6 @@ func (mb *WebView) GetJsInt(es JsExecState, v JsValue) int32 {
 
 //通过ES和JsValue将JS传过来的值转为浮点型，如果v是个浮点型，返回相应值。如果是其他类型，返回0.0（这里注意）
 //es通过 GetExecState() 获取或者回调函数的es参数，jsValue通过 GetJsValue…… 之类的获取或者RunJS()返回值
-
 func (mb *WebView) GetJsFloat64(es JsExecState, v JsValue) float64 {
 	var api dllAPI
 	api.apiStr = "jsToDouble"
