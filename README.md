@@ -7,6 +7,8 @@
 
 
 # 使用前准备
+首先， go get github.com/selfplan/gowebui
+
 dll文件夹内有两个DLL文件，一个是 miniblink 的32位接口DLL。
 
 大家可以自行到 https://github.com/weolar/miniblink49/releases 下载最新编译后的 dll 替换就行。（注意，名称一定得是 node.dll，后有说明）
