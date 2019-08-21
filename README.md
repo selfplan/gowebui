@@ -35,7 +35,7 @@ set GOARCH=386
 
 # 如何使用
 以下是一个简单且完整的显示一个浏览器窗口的代码：
-
+```go
 package main
 
 import (
@@ -77,7 +77,7 @@ func abcC(es gowebui.JsExecState, param uintptr) uintptr {
 	}
 	return 0
 }
-
+```
 # 目前已实现公开接口
 
 公开类型：
